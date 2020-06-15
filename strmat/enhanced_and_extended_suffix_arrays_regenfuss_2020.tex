@@ -7,6 +7,94 @@
 
 \maketitle
 
+\begin{abstract}
+In this report, I review the literature on enhanced and extended suffix arrays
+in the context of searching long strings. I examine the different algorithms
+used for both constructing enhanced and extended suffix arrays and for using
+them in searching long strings.
+In the end, I compare enhanced and extended suffix arrays with suffix arrays
+and suffix trees.
+\end{abstract}
+
+\section*{Introduction}
+
+Finding the occurences of one string in another string, longest repeated
+substrings and longest shared substrings of two different strings are
+fundamental problems for many kinds of computing systems.
+
+As a result, many different algorithms have been developed for these
+kinds of problems: For finding the occurences of one string in another one
+the naive algorithm and the Boyer-Moore algorithm, %TODO: citation needed
+and for all three of these problems (and more) three different data structures:
+the suffix tree, %TODO: citation needed
+the suffix array and the enhanced suffix array. %TODO: citation needed (Manber and Myers 1990 and Abouelhoda, Kurtz and Ohlebusch 2002
+
+Suffix trees, suffix arrays and enhanced suffix arrays have the
+disadvantage of requiring to be constructed for a specific string,
+which has time and space requirements.
+Because of this, they are better suited for tasks where unchanging %TODO: is unchanging the right word here?
+strings have to
+be searched or matched repeatedly, although there has been some work to
+extend the suffix array to dynamic strings. %TODO: Salson et. al 2009
+
+Since searching and matching very long unchanging strings is very common
+in genome analysis, it doesn't surprise that both suffix arrays and
+enhanced suffix arrays were developed in that context.
+
+\section*{Different String Matching Problems}
+
+A plethora of different string matching problems have been identified
+by computer scientists, for many of which suffix arrays and enhanced
+suffix arrays are useful.
+
+\subsection*{Searching}
+
+
+
+%Problems:
+%Repeats:
+% • Maximal Repeats
+% • Supermaximal repeats
+%Searching
+% • Longest common substring
+
+\section*{Suffix Trees}
+
 \section*{Suffix Arrays}
+
+\subsection*{Construction}
+
+\subsection*{Searching}
+
+\section*{Enhanced and Extended Suffix Arrays}
+
+Enhanced suffix arrays were first proposed in Abouelhoda et al. 2004 as an
+improvement over normal suffix arrays. An enhanced suffix array contains
+a suffix array together with the LCP-array of the string, and sometimes
+a Burrows-Wheeler transformation and an inverse of the suffix table.
+
+\subsection*{suftab}
+
+\subsection*{lcptab}
+
+\subsection*{bwttab}
+
+\subsection*{suftab$^{-1}$}
+
+%Why do they think the lcp-tree is so important?
+%Tree bottom-up traversal is from the root to the leaves,
+%top-down is the other way around
+
+\subsection*{LCP-Interval Trees}
+
+\subsection*{Searching}
+
+\subsection*{Finding Maximal and Supermaximal Repeats}
+
+\section*{Comparison}
+
+\section*{Applications}
+
+\section*{Conclusion}
 
 \end{document}

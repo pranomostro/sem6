@@ -1,0 +1,19 @@
+Find (perhaps cite):
+
+A.L. Delcher, A. Phillippy, J. Carlton, S.L. Salzberg, Fast algorithms
+for large-scale genome alignment and comparison, Nucl. Acids Res. 30 (11)
+(2002) 2478–2483.
+(Source for an algorithm for computing supermaximal repeats easily with
+an enhanced suffix array)
+
+T. Kasai, G. Lee, H. Arimura, S. Arikawa, K. Park, Linear-time
+longest-common-prefix computation in suffix arrays and its applications,
+in: Proc. Annual Symposium on Combinatorial Pattern Matching, in:
+Lecture Notes in Computer Science, vol. 2089, Springer-Verlag, Berlin,
+2001, pp. 181–192.
+(Source for linear time algorithm to simulate suffix tree traversal
+using suffix & lcp array)
+
+Understand:
+
+Computation of the lcp-interval tree (Abouelhoda et al. 2004 p. 9)
