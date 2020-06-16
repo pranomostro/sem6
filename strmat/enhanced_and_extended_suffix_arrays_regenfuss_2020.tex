@@ -1,4 +1,8 @@
-\documentclass{article}
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{natbib}
 
 \title{Enhanced and Extended Suffix Arrays}
 \author{Adrian Regenfuß}
@@ -27,7 +31,7 @@ kinds of problems: For finding the occurences of one string in another one
 the naive algorithm and the Boyer-Moore algorithm, %TODO: citation needed
 and for all three of these problems (and more) three different data structures:
 the suffix tree, %TODO: citation needed
-the suffix array and the enhanced suffix array. %TODO: citation needed (Manber and Myers 1990 and Abouelhoda, Kurtz and Ohlebusch 2002
+the suffix array \citealt{manber1993suffix} and the enhanced suffix array. %TODO: citation needed (Manber and Myers 1990 and Abouelhoda, Kurtz and Ohlebusch 2002
 
 Suffix trees, suffix arrays and enhanced suffix arrays have the
 disadvantage of requiring to be constructed for a specific string,
@@ -48,8 +52,6 @@ by computer scientists, for many of which suffix arrays and enhanced
 suffix arrays are useful.
 
 \subsection*{Searching}
-
-
 
 %Problems:
 %Repeats:
@@ -96,5 +98,8 @@ a Burrows-Wheeler transformation and an inverse of the suffix table.
 \section*{Applications}
 
 \section*{Conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{sources}
 
 \end{document}
