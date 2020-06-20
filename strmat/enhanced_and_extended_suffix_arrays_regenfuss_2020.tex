@@ -26,24 +26,94 @@ Finding the occurences of one string in another string, longest repeated
 substrings and longest shared substrings of two different strings are
 fundamental problems for many kinds of computing systems.
 
-As a result, many different algorithms have been developed for these
-kinds of problems: For finding the occurences of one string in another one
-the naive algorithm and the Boyer-Moore algorithm, %TODO: citation needed
-and for all three of these problems (and more) three different data structures:
-the suffix tree, %TODO: citation needed
-the suffix array \citealt{manber1993suffix} and the enhanced suffix array. %TODO: citation needed (Manber and Myers 1990 and Abouelhoda, Kurtz and Ohlebusch 2002
+As a result, many different algorithms have been developed for these kinds
+of problems: For finding the occurences of one string in another one the
+naive algorithm and the Boyer-Moore algorithm (\citealt{boyer1977fast}),
+and for all three of these problems (and more) three different data
+structures: the suffix tree (\citealt{weiner1973linear}), the suffix
+array (\citealt{manber1993suffix}) and the enhanced suffix array
+(\citealt{abouelhoda2002enhanced}).
 
 Suffix trees, suffix arrays and enhanced suffix arrays have the
 disadvantage of requiring to be constructed for a specific string,
-which has time and space requirements.
-Because of this, they are better suited for tasks where unchanging %TODO: is unchanging the right word here?
-strings have to
-be searched or matched repeatedly, although there has been some work to
-extend the suffix array to dynamic strings. %TODO: Salson et. al 2009
+which has time and space requirements.  Because of this, they are better
+suited for tasks where immutable strings have to be searched or matched
+repeatedly, although there has been some work to extend the suffix array
+to dynamic strings (\citealt{salson2010dynamic}).
 
-Since searching and matching very long unchanging strings is very common
+Since searching and matching very long immutable strings is very common
 in genome analysis, it doesn't surprise that both suffix arrays and
 enhanced suffix arrays were developed in that context.
+
+This report first describes the enhanced suffix array as a data structure,
+then sketches the algorithms used for constructing it, and afterwards
+describes different string matching problems and how they are solved
+by enhanced and extended suffix arrays. Finally, it compares enhanced
+suffix arrays to normal suffix arrays and suffix trees, and closes with
+an overview of tools that implement enhanced and extended suffix arrays.
+
+\section*{Enhanced and Extended Suffix Arrays}
+
+Enhanced suffix arrays were first proposed in
+\citealt{abouelhoda2002enhanced} as an improvement over normal suffix
+arrays. An enhanced suffix array contains a suffix array together with the
+LCP-array of the string, and sometimes a Burrows-Wheeler transformation
+and an inverse of the suffix table.
+
+For the following, let $S$ be a finite string of length $n$ over the
+finite alphabet $\Sigma$.
+
+\subsection*{suftab}
+
+The suffix array $\hbox{suftab}$ is an array of integers describing the
+positions of of sorted suffixes of $S$ in $S$.
+
+More formally, let $\hbox{Suf}_{S}$ be the set of suffixes of $S$. Let
+then $\hbox{SortSuf}_{S}$ be the array of lexically sorted suffixes of
+$S$. Then $\hbox{suftab}[i]=k$ if and only if $S[k..n]=\hbox{SortSuf}[i]$.
+
+\subsection*{lcptab}
+
+The LCP (longest common prefix) table describes the length of the longest
+common prefix of two neighbouring entries in the array of sorted suffixes.
+
+Formally, $\hbox{lcptab}[i]=k$ iff
+$\hbox{SortSuf}[i][0..k]=\hbox{SortSuf}[i-1][0..k]$. The zeroth entry
+in $\hbox{lcptab}$ is always $0$.
+
+\subsection*{bwttab}
+
+\subsection*{suftab$^{-1}$}
+
+\subsection*{Example}
+
+For example, let $S=\hbox{"cagccacat"}$.  Then $\hbox{suftab}$,
+$\hbox{lcptab}$, $\hbox{bwttab}$, $\hbox{suftab}^{-1}$ and
+$\hbox{suftab}$ are the following:
+
+\begin{center}
+	\begin{tabular}{ | l | c | c | r | }
+		\hline
+		i & suftab & lcptab & SortSuf \\ \hline
+		0 & 5 & 0 & acat\$ \\ \hline
+		1 & 1 & 1 & agccacat\$ \\ \hline
+		2 & 7 & 1 & at\$ \\ \hline
+		3 & 4 & 0 & cacat\$ \\ \hline
+		4 & 0 & 2 & cagccacat\$ \\ \hline
+		5 & 6 & 2 & cat\$ \\ \hline
+		6 & 3 & 1 & ccacat\$ \\ \hline
+		7 & 2 & 0 & gccacat\$ \\ \hline
+		8 & 8 & 0 & t\$ \\ \hline
+		9 & 9 & 0 & \$ \\ \hline
+	\end{tabular}
+\end{center}
+
+\subsection*{LCP-Interval Trees}
+
+%Tree bottom-up traversal is from the root to the leaves,
+%top-down is the other way around
+
+\section*{Construction}
 
 \section*{Different String Matching Problems}
 
@@ -51,51 +121,76 @@ A plethora of different string matching problems have been identified
 by computer scientists, for many of which suffix arrays and enhanced
 suffix arrays are useful.
 
-\subsection*{Searching}
+\citealt[pg. 2]{abouelhoda2004replacing} summarizes suffix tree applications
+from \citealt[chap. 2]{gusfield1997algorithms} and classify them after their
+type of tree traversal.
+
+\subsection*{Exact String Matching}
+
+\subsubsection*{Description}
+
+Give a string $S$ of length $n$ and a string $T$ of length $m$ with $m
+\le n$ both using them same alphabet $\Sigma$, the exact matches of $T$
+in $S$ is the set of indices $I=\{i_1, \ldots, i_k\}$ for which holds
+that $\forall i \in I: S[i..i+m]=T$.
+
+In other words, $I$ is the set of indices where $T$ is a substring in $S$.
+
+\subsubsection*{Suffix Array Algorithm}
+
+\citealt{manber1993suffix} describes an exact string matching algorithm
+that runs in ${\cal{O}}(m \log|\Sigma)$ time and constant space.
+
+Their proposed algorithm uses binary search to sequentially find
+the first (smallest) index $L_{W}$ and the last (biggest) index
+$R_{W}$ in $\hbox{suftab}$ so that $S[\hbox{suftab}[L_{W}]]$ and
+$S[\hbox{suftab}[R_{W}]]$ have the prefix $T$.
+
+First, it searches $L_{W}$ using binary search on the whole array
+$\hbox{suftab}$ and then uses $L_{W}$ as a left boundary to find $R_{W}$,
+which often improves runtime as opposed to two independent searches
+over the whole array, although the latter might be easier to parallelize.
+
+\subsubsection*{Extended Suffix Array Algorithm}
+
+\citealt{manber1993suffix} then propose a speed improvement based on
+longest common prefixes. Their method attempts to reduce the number of
+single-character comparisons by only comparing characters that occur
+after the longest common prefix of $T$ and $S[M_{W}]$ ($M_{W}$ being
+the index in the middle between $L_{W}$ and $R_{W}$).
+
+%They then go on to explain a more complicated method,
+%and Gusfield expands on their work on pg. 152 (84 in the PDF).
+
+I have not come across a proposal to use interpolation search first
+described in \citealt{perl1978interpolation} to search the suffix array
+with an improved ${\cal{O}}(\log \log n)$ runtime.  This perhaps stems
+from the fact that interpolation search assumes uniform distribution of
+the alphabet, and has a worst-case runtime of ${\cal{O}}(n)$ runtime. It
+still might be useful to empirically test speed differences in binary
+and interpolation search.
+
+\subsection*{Supermaximal Repeats}
+
+\subsubsection*{Description}
+
+\subsubsection*{Enhanced Suffix Array Algorithm}
 
 %Problems:
 %Repeats:
 % • Maximal Repeats
 % • Supermaximal repeats
+% • Maximum Unique Matches
 %Searching
 % • Longest common substring
-
-\section*{Suffix Trees}
-
-\section*{Suffix Arrays}
-
-\subsection*{Construction}
-
-\subsection*{Searching}
-
-\section*{Enhanced and Extended Suffix Arrays}
-
-Enhanced suffix arrays were first proposed in Abouelhoda et al. 2004 as an
-improvement over normal suffix arrays. An enhanced suffix array contains
-a suffix array together with the LCP-array of the string, and sometimes
-a Burrows-Wheeler transformation and an inverse of the suffix table.
-
-\subsection*{suftab}
-
-\subsection*{lcptab}
-
-\subsection*{bwttab}
-
-\subsection*{suftab$^{-1}$}
-
-%Why do they think the lcp-tree is so important?
-%Tree bottom-up traversal is from the root to the leaves,
-%top-down is the other way around
-
-\subsection*{LCP-Interval Trees}
-
-\subsection*{Searching}
-
-\subsection*{Finding Maximal and Supermaximal Repeats}
 
 \section*{Comparison}
 
 \section*{Applications}
+
+%REPuter
+%vmatch
+%MUMmer
 
 \section*{Conclusion}
 
