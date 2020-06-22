@@ -6,3 +6,6 @@
 *.log
 *.run.xml
 *.toc
+*.nav
+*.out
+*.snm
