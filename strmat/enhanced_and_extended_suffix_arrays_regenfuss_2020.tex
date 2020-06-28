@@ -94,20 +94,22 @@ For example, let $S=\hbox{"cagccacat"}$.  Then $\hbox{suftab}$,
 $\hbox{lcptab}$, $\hbox{bwttab}$, $\hbox{suftab}^{-1}$ and
 $\hbox{suftab}$ are the following:
 
+%TODO: add inverse suffix array
+
 \begin{center}
-	\begin{tabular}{ | l | c | c | r | }
+	\begin{tabular}{ | l | c | c | c | l | }
 		\hline
-		i & suftab & lcptab & SortSuf \\ \hline
-		0 & 5 & 0 & acat\$ \\ \hline
-		1 & 1 & 1 & agccacat\$ \\ \hline
-		2 & 7 & 1 & at\$ \\ \hline
-		3 & 4 & 0 & cacat\$ \\ \hline
-		4 & 0 & 2 & cagccacat\$ \\ \hline
-		5 & 6 & 2 & cat\$ \\ \hline
-		6 & 3 & 1 & ccacat\$ \\ \hline
-		7 & 2 & 0 & gccacat\$ \\ \hline
-		8 & 8 & 0 & t\$ \\ \hline
-		9 & 9 & 0 & \$ \\ \hline
+		i & suftab & lcptab & bwttab & SortSuf \\ \hline
+		0 & 5 & 0 & c & acat\$ \\ \hline
+		1 & 1 & 1 & c & agccacat\$ \\ \hline
+		2 & 7 & 1 & c & at\$ \\ \hline
+		3 & 4 & 0 & c & cacat\$ \\ \hline
+		4 & 0 & 2 &  & cagccacat\$ \\ \hline
+		5 & 6 & 2 & a & cat\$ \\ \hline
+		6 & 3 & 1 & g & ccacat\$ \\ \hline
+		7 & 2 & 0 & a & gccacat\$ \\ \hline
+		8 & 8 & 0 & a & t\$ \\ \hline
+		9 & 9 & 0 & t & \$ \\ \hline
 	\end{tabular}
 \end{center}
 

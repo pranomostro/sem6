@@ -11,6 +11,9 @@ enhanced_and_extended_suffix_arrays_regenfuss_2020.pdf: enhanced_and_extended_su
 
 presentation.pdf: presentation.tex
 	pdflatex presentation.tex
+	bibtex presentation.aux
+	pdflatex presentation.tex
+	pdflatex presentation.tex
 
 clean:
 	rm -f *.aux *.bbl *.bcf *.blg *.dvi *.log *.run.xml *.toc *.nav *.out *.snm
