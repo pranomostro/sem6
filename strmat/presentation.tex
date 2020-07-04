@@ -9,7 +9,7 @@
 \usepackage[longend,algoruled,vlined,german]{algorithm2e}%[titlenumbered]
 \usepackage{subfigure}
 \usepackage{dsfont}
-\usepackage{natbib}
+\usepackage[numbers]{natbib}
 
 %\DeclareGraphicsRule{.pspdftex}{pdf}{.pspdftex}{}%
 \newcommand{\inputfig}[1]{\input{#1.pspdftex}}%
@@ -165,7 +165,7 @@
 	\frametitle{Contents of an Enhanced Suffix Array}
 	\begin{itemize}
 		\item Suffix Array $\hbox{suftab}$
-		\item LCP Array $\hbox{lcptab}$
+		\item LCP Array $\hbox{LCPtab}$
 		\item Burrows-Wheeler Transformation Array $\hbox{bwttab}$
 		\item Inverse Suffix Array $\hbox{suftab}^{-1}$
 	\end{itemize}
@@ -188,20 +188,20 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{LCP Array $\hbox{lcptab}$}
+	\frametitle{LCP Array $\hbox{LCPtab}$}
 	LCP Array is the array of the lengths for the prefixes of
 	neighbouring suffixes in the suffix array
 
 	More formal for a string $S$:
 
-	$\hbox{lcptab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i+1]+k]$
+	$\hbox{LCPtab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i+1]+k]$
 
 	Value is $0$ for the last suffix.
 \end{frame}
 
 \begin{frame}
 	\frametitle{LCP Array Example}
-	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{esa_example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{esa_lcp_search}
 \end{frame}
 
 \begin{frame}
@@ -231,7 +231,7 @@
 
 	Example "cag":
 
-	$\hbox{suftab}=[1,0,2,3]$, $\hbox{suftab}^{-1}=[1,0,2,3]$
+	$\hbox{suftab}=[1,0,2,3]$, $\hbox{suftab}^{-1}=[0,1,3,2]$
 \end{frame}
 
 \begin{frame}
@@ -244,10 +244,10 @@
 	The interval $[i..j]$ is an LCP-interval of value $\ell$ (short $\ell-[i..j]$)
 	iff \\*
 	\begin{itemize}
-		\item $\hbox{lcptab}[i]<\ell$
-		\item $\hbox{lcptab}[k]\ge \ell$ for all $k: i+1 \le k \le j$
-		\item $\hbox{lcptab}[k=\ell$ for at least one $k: i+1 \le k \le j$
-		\item $\hbox{lcptab}[j+1]<\ell$
+		\item $\hbox{LCPtab}[i]<\ell$
+		\item $\hbox{LCPtab}[k]\ge \ell$ for all $k: i+1 \le k \le j$
+		\item $\hbox{LCPtab}[k=\ell$ for at least one $k: i+1 \le k \le j$
+		\item $\hbox{LCPtab}[j+1]<\ell$
 	\end{itemize}
 \end{frame}
 
@@ -269,12 +269,12 @@
 
 \begin{frame}
 	\frametitle{LCP-Interval Tree for given string}
-	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{lcp_interval_tree}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{LCP_interval_tree}
 \end{frame}
 
 \begin{frame}
 	\frametitle{LCP-Intervals not part of the Enhanced Suffix Array}
-	\citealt{abouelhoda2002enhanced} stresses repeatedly that neither
+	\cite{abouelhoda2002enhanced} stresses repeatedly that neither
 	LCP-intervals nor LCP-interval trees are stored, they are merely
 	inferred by LCP array \& BWT array.
 \end{frame}
@@ -287,10 +287,10 @@
 
 	We have:
 	\begin{itemize}
-		\item Suffix Array: Introduced by \citealt{manber1993suffix} (but likely used before), only contains suffix array
-		\item Suffix Array with LCP-Array: Very common, also mentioned by \citealt{manber1993suffix} and \citealt{gusfield1997algorithms}
-		\item Extended Suffix Array: Rarely used, only mentioned by \citealt{salson2010dynamic}, seems to be just suffix array with LCP array.
-		\item Enhanced Suffix Array: Introduced by \citealt{abouelhoda2002enhanced}, \textbf{focus of this talk}. Contains suffix array, BWT array, LCP array
+		\item Suffix Array: Introduced by \cite{manber1993suffix} (but likely used before), only contains suffix array
+		\item Suffix Array with LCP-Array: Very common, also mentioned by \cite{manber1993suffix} and \cite{gusfield1997algorithms}
+		\item Extended Suffix Array: Rarely used, only mentioned by \cite{salson2010dynamic}, seems to be just suffix array with LCP array.
+		\item Enhanced Suffix Array: Introduced by \cite{abouelhoda2002enhanced}, \textbf{focus of this talk}. Contains suffix array, BWT array, LCP array
 	\end{itemize}
 \end{frame}
 
@@ -335,7 +335,7 @@
 	Second search uses start position of the interval as left
 	starting point.
 
-	Runtime $\O(m + \log n)$ (\citealt{manber1993suffix}).
+	Runtime $\O(m + \log n)$ (\cite{manber1993suffix}).
 \end{frame}
 
 \begin{frame}
@@ -345,8 +345,8 @@
 
 \begin{frame}
 	\frametitle{Using the Suffix Array with LCP information}
-	\citealt{manber1993suffix} already describes methods of speeding
-	this binary search up using lcp information:
+	\cite{manber1993suffix} already describes methods of speeding
+	this binary search up using LCP information:
 
 	When the upper and lower bound lie within
 	the same $\ell$-interval, comparing $T$ and
@@ -356,23 +356,23 @@
 
 \begin{frame}
 	\frametitle{Generating the LCP Information}
-	For this, \citealt{manber1993suffix} proposes pre-computing lcp
+	For this, \cite{manber1993suffix} proposes pre-computing LCP
 	information for binary-tree-like pairs
 	($(0,n), (0,\frac{n}{2}), (\frac{n}{4}, \frac{3*n}{4})$ etc.),
 	but there are other possible approaches, using e.g. traversal
-	of lcp-interval trees.
+	of LCP-interval trees.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Example}
 	$T$="cac", $\hbox{low}=3$, $\hbox{high}=6$.
-	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{esa_lcp_search_1}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{esa_LCP_search_1}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Gusfield's Super-Accelerant}
-	\citealt[pp. 152]{gusfield1997algorithms} describes a further
-	accelerant to searching using lcp data.
+	\cite[pp. 152]{gusfield1997algorithms} describes a further
+	accelerant to searching using LCP data.
 	%TODO: understand it & describe it here!
 
 	Note that these accelerants don't improve worst-case performance,
@@ -382,46 +382,179 @@
 \begin{frame}
 	\frametitle{Personal Idea}
 	Personal idea: use Interpolation Search
-	(\citealt{perl1978interpolation}) for searching the suffix array.
+	(\cite{perl1978interpolation}) for searching the suffix array.
 
 	Reasons: runs in $\O(\log \log n)$ average case, and genomic
-	data seems uniformly distributed. Maybe look into this.
-\end{frame}
-
-\subsection{Traversing the LCP-Interval Tree}
-
-\begin{frame}
-	\frametitle{Traversing the LCP-Interval Tree}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Finding Maximal Repeats}
+	data seems uniformly distributed.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Finding Supermaximal Repeats}
+	Finding supermaximal repeats is comparatively easy
+
+	\dq A string $\omega$ is a supermaximal repeat if[f] […] there is an
+        $\ell$-interval [i..j] such that
+	\begin{itemize}
+		\item[–] [i..j] is a local maximum in the LCP-table and [i..j] is the $\omega$-interval,
+		\item[–] the characters bwttab[i], bwttab[i+1], …, bwttab[j] are pairwise distinct."
+	\end{itemize}
+	\cite{abouelhoda2002enhanced}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Finding Longest Common Substrings}
+	\frametitle{Algorithm}
+	Traverse LCP-array linearly, whenever finding a local maximum
+	(and $\hbox{bwttab}[i] \neq \hbox{bwttab}[i+1]$), report it.
+
+	Runs in $\O(n)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Illustration}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{local_maxima}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Finding Maximum Unique Matches}
+	In short, a Maximum Unique Match (MUM) is just a supermaximal
+	repeat in two different strings.
+
+	Or, more formally: The MUM $u$ of $S_1$ and $S_2$
+	is a supermaximal repeat of $S_1\#S_2$ so that
+	$(i_1,j_1)=(i_2,j_2)=u$ and $j_1<p<i_2$ ($p=|S_1|$).
+\end{frame}
+
+\begin{frame}
+	\frametitle{Algorithm for finding MUMs}
+	Use the algorithm for finding supermaximal repeats on $S_1\#S_2$.
+
+	Filter out non-MUM matches.
+
+	Runs in $\O(n)$.
+
+	But: This seems very wasteful to me! Every time we want to
+	calculate a MUM, we have to generate the ESA for the whole
+	$S_1\#S_2$! Especially if computing MUMs for many different
+	$S_2$, this seems horrible! But maybe clever trick for combining
+	ESAs? Haven't seen it yet.
+\end{frame}
+
+\subsection{Traversing the lcp-interval tree}
+
+\begin{frame}
+	\frametitle{traversing the lcp-interval tree}
+	The lcp-interval tree is very useful many kinds of strings
+	processing algorithms.
+
+	It is the suffix tree without leaves.
+
+	Is {\em{never actually completely constructed}}, but {\em{instead
+	generated on the fly from the lcp array}}.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Algorithm for traversing the lcp-interval tree}
+	In essence:
+
+	\begin{itemize}
+		\item the "level" we're on in the lcp-interval describes the current position in the tree
+		\item we can save child intervals on a stack
+		\item Whenever we "leave\dq an interval, we
+		\item \begin{itemize}
+			\item Pop it from the stack
+			\item Process it <-- Customizable!
+			\item Add it to the list of child intervals of the top element of the stack
+		\end{itemize}
+		\item Whenever we \dq enter\dq a new interval, we push it on the stack
+	\end{itemize}
+\end{frame}
+
+%TODO?
+\begin{frame}
+	\frametitle{Short Example}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Processing an Interval}
+	The magic happens in the function process, which could be given
+	as a parameter to the algorithm.
+
+	It receives an lcp-interval, containing:
+	\begin{itemize}
+		\item $\ell$-value (length of prefixes)
+		\item Left and right boundary of the interval
+		\item List of children of the interval
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Properties of LCP-Interval Tree Traversal}
+	Runtime depends on
+	\begin{itemize}
+		\item Time for specific data structures (list for children, stack)
+		\item Time complexity for process
+	\end{itemize}
+
+	In itself, it has a runtime of $\O(n)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Maximal Repeats}
+
+	Definition maximal repeat: \dq A supermaximal repeat is a maximal
+	repeat that never occurs as a substring of any other maximal
+	repeat." (\cite{abouelhoda2002enhanced})
+	%TODO
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Tandem Repeats}
+	%TODO
 \end{frame}
 
 \section{Construction}
 
 \begin{frame}
-	\frametitle{Of the Suffix Array}
+	\frametitle{Of the Suffix Array} Obvious $\O(n \log n)$
+	algorithm: Just sort the suffixes using an $\O(n \log
+	n)$ sorting algorithm (e.g. radix sort, as described in
+	\cite{manber1993suffix}). Possibly use pointers.
+
+	Alternative: Use $skew$ algorithm described in
+	\cite{karkkainen2003simple} or the pure-induced sorting
+	algorithm from \cite{nong2009linear}.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Of the Inverse Suffix Array}
+	To be quite honest, I don't really know.
+
+	Maybe a trivial algorithm?
+
+	\cite{baier2015linear} describes an algorithm GSACA that also
+	constructs the inverse suffix array, but I haven't had enough
+	time to read \& understand it.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Of the LCP Array}
+	Reminder: The LCP-interval tree is the suffix tree without leaves.
+
+	The suffix tree can be constructed in linear time
+	(\cite{giegerich1997ukkonen}), so we can construct first
+	the suffix tree, then remove the leaves which results in the
+	LCP-interval tree, and create the LCP array from that (all three
+	run in $\O(n)$, so in combination they also run in $\O(n)$).
+
+	Alternatively, one can use the induced sorting algorithm
+	(\cite{fischer2011inducing}) to compute both suffix arrays
+	and LCP-arrays.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Of the BWT Array}
+	The BWT array can be constructed in linear time from the suffix
+	array using the naive algorithm.
 \end{frame}
 
 \section{Comparison with the Suffix Tree}
@@ -433,20 +566,40 @@
 	\begin{itemize}
 		\item Suffix tree very succesful \& fast, but uses a lot of memory
 		\item Often used in Genome search/alignment
-		\item Use about 20 bytes per input character (\citealt{kurtz1999reducing})
+		\item Use about 20 bytes per input character (\cite{kurtz1999reducing})
 		\item Need datastructure with same time complexity as suffix tree, but lower space requirements
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Space Requirements}
+	\begin{itemize}
+		\item $~10n$ bytes per input character ($4n$ for the suffix array, $n$ for the LCP array, $n$ for $\hbox{bwttab}$, $4n$ for $\hbox{suftab}^{-1}$)
+		\item But not all of these have to be in memory all the time! Very algorithm specific ($\hbox{suftab}^{-1}$ only for tandem repeat finding).
+		\item Can be loaded from disk before executing algorithm
+		\item Caveat: works only with strings shorter than $2^{32}$ bytes, and LCP values $<255$ (although there are some workarounds here, described by \cite{abouelhoda2004replacing})
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Advantages of Enhanced Suffix Arrays}
 	\begin{itemize}
-		\item $~6n$ bytes per input character ($4n$ for the suffix array, $n$ for the lcp array, $n$ for $\hbox{bwttab}$)
-		\item Caveat: works only with strings shorter than $2^{32}$ bytes, and lcp values $<255$ (although there are some workarounds here, described by \citealt{abouelhoda2004replacing})
 		\item Construction \& algorithms same time complexity as suffix tree for most matching problems
 		\item Better cache coherence (due to linear layout in memory)
 		\item Empirical speedups \& easier to implement
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Disadvantages of Enhanced Suffix Arrays}
+	Have to be constructed in advance from the string, string
+	can't be changed afterwards (or only with difficulty,
+	\cite{salson2010dynamic} describes some methods)
+
+	Big alphabets were rarely discussed in the literature, maybe a
+	source of problems? Especially with unicode.
+
+	Otherwise seem to be pretty good, it seems.
 \end{frame}
 
 \begin{frame}
@@ -457,6 +610,10 @@
 
 	Maybe I'll have enough time to implement with interpolation
 	search this summer :-)
+\end{frame}
+
+\begin{frame}
+	\frametitle{History}
 \end{frame}
 
 \begin{frame}

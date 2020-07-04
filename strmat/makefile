@@ -10,9 +10,7 @@ enhanced_and_extended_suffix_arrays_regenfuss_2020.pdf: enhanced_and_extended_su
 	pdflatex enhanced_and_extended_suffix_arrays_regenfuss_2020.tex
 
 presentation.pdf: presentation.tex
-	pdflatex presentation.tex
 	bibtex presentation.aux
-	pdflatex presentation.tex
 	pdflatex presentation.tex
 
 clean:
