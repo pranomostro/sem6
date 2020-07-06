@@ -11,7 +11,6 @@
 \usepackage{dsfont}
 \usepackage[numbers]{natbib}
 
-%\DeclareGraphicsRule{.pspdftex}{pdf}{.pspdftex}{}%
 \newcommand{\inputfig}[1]{\input{#1.pspdftex}}%
 
 \renewcommand{\O}{\mathcal{O}}
@@ -165,7 +164,7 @@
 	\frametitle{Contents of an Enhanced Suffix Array}
 	\begin{itemize}
 		\item Suffix Array $\hbox{suftab}$
-		\item LCP Array $\hbox{LCPtab}$
+		\item LCP Array $\hbox{lcptab}$
 		\item Burrows-Wheeler Transformation Array $\hbox{bwttab}$
 		\item Inverse Suffix Array $\hbox{suftab}^{-1}$
 	\end{itemize}
@@ -179,7 +178,6 @@
 	Positions of sorted suffixes in the string are entries of $\hbox{suftab}$
 \end{frame}
 
-%TODO: "a is rendered as 'ä'. Fix that!
 \begin{frame}
 	\frametitle{Example for $\hbox{suftab}$}
 	For "cag" the suffixes are ("cag\$", \dq ag\$'', "g\$", "\$"). \\*
@@ -188,13 +186,13 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{LCP Array $\hbox{LCPtab}$}
+	\frametitle{LCP Array $\hbox{lcptab}$}
 	LCP Array is the array of the lengths for the prefixes of
 	neighbouring suffixes in the suffix array
 
 	More formal for a string $S$:
 
-	$\hbox{LCPtab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i+1]+k]$
+	$\hbox{lcptab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i+1]+k]$
 
 	Value is $0$ for the last suffix.
 \end{frame}
@@ -244,10 +242,10 @@
 	The interval $[i..j]$ is an LCP-interval of value $\ell$ (short $\ell-[i..j]$)
 	iff \\*
 	\begin{itemize}
-		\item $\hbox{LCPtab}[i]<\ell$
-		\item $\hbox{LCPtab}[k]\ge \ell$ for all $k: i+1 \le k \le j$
-		\item $\hbox{LCPtab}[k=\ell$ for at least one $k: i+1 \le k \le j$
-		\item $\hbox{LCPtab}[j+1]<\ell$
+		\item $\hbox{lcptab}[i]<\ell$
+		\item $\hbox{lcptab}[k]\ge \ell$ for all $k: i+1 \le k \le j$
+		\item $\hbox{lcptab}[k=\ell$ for at least one $k: i+1 \le k \le j$
+		\item $\hbox{lcptab}[j+1]<\ell$
 	\end{itemize}
 \end{frame}
 
@@ -469,9 +467,79 @@
 	\end{itemize}
 \end{frame}
 
-%TODO?
 \begin{frame}
-	\frametitle{Short Example}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_1}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_2}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_3}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_4}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_5}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_6}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_7}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_8}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_9}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_10}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_11}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_12}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_13}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_14}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{traversal_15}
 \end{frame}
 
 \begin{frame}
@@ -504,12 +572,7 @@
 	Definition maximal repeat: \dq A supermaximal repeat is a maximal
 	repeat that never occurs as a substring of any other maximal
 	repeat." (\cite{abouelhoda2002enhanced})
-	%TODO
-\end{frame}
-
-\begin{frame}
-	\frametitle{Finding Tandem Repeats}
-	%TODO
+	%TODO: Explain + example
 \end{frame}
 
 \section{Construction}
