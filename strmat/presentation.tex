@@ -149,7 +149,8 @@
 \section{Structure}
 
 \begin{frame}
-	\frametitle{Structure}
+	\frametitle{Structure of the Presentation}
+	What, How, Why, in that order.
 	\begin{itemize}
 		\item Description of data structures
 		\item Clarification of terminology
@@ -567,12 +568,63 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Finding Maximal Repeats}
+	\frametitle{Maximal Repeats}
+	A maximal repeat is a string $\omega$ so that
+	$\omega=S[i_1..j_1]=S[i_2..j_2]$, with $i_1 \ne i_2$, and both
+	$S[i_1-1] \ne S[i_2-1]$ and $S[j_1+1] \ne S[j_2+1]$.
 
-	Definition maximal repeat: \dq A supermaximal repeat is a maximal
-	repeat that never occurs as a substring of any other maximal
-	repeat." (\cite{abouelhoda2002enhanced})
-	%TODO: Explain + example
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{maximal_pair}
+
+%TODO: space!
+	Here, \dq abc\dq is a maximal repeat, but \dq abcy\dq is a supermaximal
+	repeat.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Computing Maximal Repeats}
+	This algorithm uses the lcp-interval tree traversal, so we start
+	in the function process that receives an lcp-interval.
+
+	Runs in $\O(kn+z)$, $k=|\Sigma|$, $z$ number of maximal repeated
+	pairs, $n=|S|$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Position Sets}
+	Broadly, for every $\ell$-interval the algorithm attempts to
+	find the set of all positions in the interval preceded by the
+	character $a$, $\forall a \in \Sigma$.
+
+	\begin{equation}
+	\mathcal{P}=
+	\begin{cases}
+		\{ 0 | 0 \in \mathcal{P}_{[i..j]}\} & \text{if $a = \bot$} \\
+		\{ p \in \mathcal{P}_{[i..j]}\} | p>0\hbox{ and } S[p-1]=a\} & \text{otherwise}
+	\end{cases}
+	\end{equation}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Compute Position Sets}
+	Position sets are computed bottom-up, child intervals first.
+
+	\vspace{2mm}
+	For all $a,b \in \Sigma$, $a \ne b$, return $((p,p+\ell -1),
+	(p',p'+\ell -1))$, $p<p'$ as maximal repeats.
+	$p\in \mathcal{P}^{q}_{[i..j]}(a)$, $p'\in
+	\mathcal{P}_{[i'..j']}(b)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Combine \& Save Position Sets}
+	Combine position set $\mathcal{P}^{q}_{[i..j]}$ with child
+	position sets $\mathcal{P}_{[i'..j']}$, save them on the stack:
+
+	\begin{equation}
+		\mathcal{P}^{q+1}_{[i..j]}(e):=\mathcal{P}^{q}_{[i..j]}(e) \cup \mathcal{P}_{[i'..j']}(e)
+	\end{equation}
+
+	for all $e \in \Sigma \cup \{\bot \}$.
 \end{frame}
 
 \section{Construction}
@@ -581,7 +633,7 @@
 	\frametitle{Of the Suffix Array} Obvious $\O(n \log n)$
 	algorithm: Just sort the suffixes using an $\O(n \log
 	n)$ sorting algorithm (e.g. radix sort, as described in
-	\cite{manber1993suffix}). Possibly use pointers.
+	\cite{manber1994suffix}). Possibly use pointers.
 
 	Alternative: Use $skew$ algorithm described in
 	\cite{karkkainen2003simple} or the pure-induced sorting
@@ -675,13 +727,15 @@
 	search this summer :-)
 \end{frame}
 
-\begin{frame}
-	\frametitle{History}
-\end{frame}
+%\begin{frame}
+%	\frametitle{History}
+%\end{frame}
 
 \begin{frame}
 	\frametitle{Questions}
+	Position sets are computed bottom-up, child intervals first.
 
+	Position sets are computed bottom-up, child intervals first.
 	\Huge{\textinterrobang}
 \end{frame}
 

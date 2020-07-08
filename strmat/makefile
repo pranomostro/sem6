@@ -14,6 +14,6 @@ presentation.pdf: presentation.tex
 	pdflatex presentation.tex
 
 clean:
-	rm -f *.aux *.bbl *.bcf *.blg *.dvi *.log *.run.xml *.toc *.nav *.out *.snm
+	rm -f *.bbl *.bcf *.blg *.dvi *.log *.run.xml *.toc *.nav *.out *.snm
 
 .PHONY: clean arbeit presentation
