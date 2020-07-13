@@ -193,9 +193,9 @@
 
 	More formal for a string $S$:
 
-	$\hbox{lcptab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i+1]+k]$
+	$\hbox{lcptab}[i]=k \Leftrightarrow S[\hbox{suftab}[i]..\hbox{suftab}[i]+k]=S[\hbox{suftab}[i+1]..\hbox{suftab}[i-1]+k]$
 
-	Value is $0$ for the last suffix.
+	Value is $0$ for the first suffix (the string itself).
 \end{frame}
 
 \begin{frame}
@@ -245,7 +245,7 @@
 	\begin{itemize}
 		\item $\hbox{lcptab}[i]<\ell$
 		\item $\hbox{lcptab}[k]\ge \ell$ for all $k: i+1 \le k \le j$
-		\item $\hbox{lcptab}[k=\ell$ for at least one $k: i+1 \le k \le j$
+		\item $\hbox{lcptab}[k]=\ell$ for at least one $k: i+1 \le k \le j$
 		\item $\hbox{lcptab}[j+1]<\ell$
 	\end{itemize}
 \end{frame}
@@ -258,12 +258,18 @@
 \end{frame}
 
 \begin{frame}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{local_maxima}
+\end{frame}
+
+\begin{frame}
 	\frametitle{LCP-Interval Trees}
 	LCP-intervals are embedded within each other, a $1$-interval
 	can contain a $2$-interval.
 
 	This forms a so-called LCP-interval tree: the root contains the $0$-interval,
 	then the $1$-intervals in the next level, \& so on.
+
+	Just the suffix tree without leaves!
 \end{frame}
 
 \begin{frame}
@@ -289,7 +295,7 @@
 		\item Suffix Array: Introduced by \cite{manber1993suffix} (but likely used before), only contains suffix array
 		\item Suffix Array with LCP-Array: Very common, also mentioned by \cite{manber1993suffix} and \cite{gusfield1997algorithms}
 		\item Extended Suffix Array: Rarely used, only mentioned by \cite{salson2010dynamic}, seems to be just suffix array with LCP array.
-		\item Enhanced Suffix Array: Introduced by \cite{abouelhoda2002enhanced}, \textbf{focus of this talk}. Contains suffix array, BWT array, LCP array
+		\item Enhanced Suffix Array: Introduced by \cite{abouelhoda2002enhanced}, \textbf{focus of this talk}. Contains suffix array, BWT array, LCP array, inverse suffix array
 	\end{itemize}
 \end{frame}
 
@@ -385,57 +391,6 @@
 
 	Reasons: runs in $\O(\log \log n)$ average case, and genomic
 	data seems uniformly distributed.
-\end{frame}
-
-\begin{frame}
-	\frametitle{Finding Supermaximal Repeats}
-	Finding supermaximal repeats is comparatively easy
-
-	\dq A string $\omega$ is a supermaximal repeat if[f] […] there is an
-        $\ell$-interval [i..j] such that
-	\begin{itemize}
-		\item[–] [i..j] is a local maximum in the LCP-table and [i..j] is the $\omega$-interval,
-		\item[–] the characters bwttab[i], bwttab[i+1], …, bwttab[j] are pairwise distinct."
-	\end{itemize}
-	\cite{abouelhoda2002enhanced}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Algorithm}
-	Traverse LCP-array linearly, whenever finding a local maximum
-	(and $\hbox{bwttab}[i] \neq \hbox{bwttab}[i+1]$), report it.
-
-	Runs in $\O(n)$.
-\end{frame}
-
-\begin{frame}
-	\frametitle{Illustration}
-	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{local_maxima}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Finding Maximum Unique Matches}
-	In short, a Maximum Unique Match (MUM) is just a supermaximal
-	repeat in two different strings.
-
-	Or, more formally: The MUM $u$ of $S_1$ and $S_2$
-	is a supermaximal repeat of $S_1\#S_2$ so that
-	$(i_1,j_1)=(i_2,j_2)=u$ and $j_1<p<i_2$ ($p=|S_1|$).
-\end{frame}
-
-\begin{frame}
-	\frametitle{Algorithm for finding MUMs}
-	Use the algorithm for finding supermaximal repeats on $S_1\#S_2$.
-
-	Filter out non-MUM matches.
-
-	Runs in $\O(n)$.
-
-	But: This seems very wasteful to me! Every time we want to
-	calculate a MUM, we have to generate the ESA for the whole
-	$S_1\#S_2$! Especially if computing MUMs for many different
-	$S_2$, this seems horrible! But maybe clever trick for combining
-	ESAs? Haven't seen it yet.
 \end{frame}
 
 \subsection{Traversing the lcp-interval tree}
@@ -627,6 +582,64 @@
 	for all $e \in \Sigma \cup \{\bot \}$.
 \end{frame}
 
+\begin{frame}
+	\frametitle{Supermaximal Repeats}
+	A string $\omega$ is a supermaximal repeat if it is a maximal
+	repeat that doesn't occur as a proper substring of another
+	maximal repeat.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Supermaximal Repeats}
+	Finding supermaximal repeats is comparatively easy
+
+	\dq A string $\omega$ is a supermaximal repeat if[f] […] there is an
+        $\ell$-interval [i..j] such that
+	\begin{itemize}
+		\item[–] [i..j] is a local maximum in the LCP-table and [i..j] is the $\omega$-interval,
+		\item[–] the characters bwttab[i], bwttab[i+1], …, bwttab[j] are pairwise distinct."
+	\end{itemize}
+	\cite{abouelhoda2002enhanced}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Algorithm}
+	Traverse LCP-array linearly, whenever finding a local maximum
+	(and $\hbox{bwttab}[i] \neq \hbox{bwttab}[i+1]$), report it.
+
+	Runs in $\O(n)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Illustration}
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio=true]{local_maxima}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Maximum Unique Matches}
+	In short, a Maximum Unique Match (MUM) is just a supermaximal
+	repeat in two different strings.
+
+	Or, more formally: The MUM $u$ of $S_1$ and $S_2$
+	is a supermaximal repeat of $S_1\#S_2$ so that
+	$(i_1,j_1)=(i_2,j_2)=u$ and $j_1<p<i_2$ ($p=|S_1|$).
+\end{frame}
+
+\begin{frame}
+	\frametitle{Algorithm for finding MUMs}
+	Use the algorithm for finding supermaximal repeats on $S_1\#S_2$.
+
+	Filter out non-MUM matches.
+
+	Runs in $\O(n)$.
+
+	But: This seems very wasteful to me! Every time we want to
+	calculate a MUM, we have to generate the ESA for the whole
+	$S_1\#S_2$! Especially if computing MUMs for many different
+	$S_2$, this seems horrible! But maybe clever trick for combining
+	ESAs? Haven't seen it yet.
+\end{frame}
+
 \section{Construction}
 
 \begin{frame}
@@ -679,7 +692,7 @@
 	First explain, then convince
 
 	\begin{itemize}
-		\item Suffix tree very succesful \& fast, but uses a lot of memory
+		\item Suffix tree very successful \& fast, but uses a lot of memory
 		\item Often used in Genome search/alignment
 		\item Use about 20 bytes per input character (\cite{kurtz1999reducing})
 		\item Need datastructure with same time complexity as suffix tree, but lower space requirements
@@ -689,7 +702,7 @@
 \begin{frame}
 	\frametitle{Space Requirements}
 	\begin{itemize}
-		\item $~10n$ bytes per input character ($4n$ for the suffix array, $n$ for the LCP array, $n$ for $\hbox{bwttab}$, $4n$ for $\hbox{suftab}^{-1}$)
+		\item $~10$ bytes per input character ($4n$ for the suffix array, $n$ for the LCP array, $n$ for $\hbox{bwttab}$, $4n$ for $\hbox{suftab}^{-1}$)
 		\item But not all of these have to be in memory all the time! Very algorithm specific ($\hbox{suftab}^{-1}$ only for tandem repeat finding).
 		\item Can be loaded from disk before executing algorithm
 		\item Caveat: works only with strings shorter than $2^{32}$ bytes, and LCP values $<255$ (although there are some workarounds here, described by \cite{abouelhoda2004replacing})
@@ -733,9 +746,6 @@
 
 \begin{frame}
 	\frametitle{Questions}
-	Position sets are computed bottom-up, child intervals first.
-
-	Position sets are computed bottom-up, child intervals first.
 	\Huge{\textinterrobang}
 \end{frame}
 
