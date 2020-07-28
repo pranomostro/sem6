@@ -2,11 +2,13 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage{natbib}
-\usepackage{graphicx}
-\usepackage{dutchcal}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{dutchcal}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{natbib}
 
 \title{Enhanced and Extended Suffix Arrays}
 \author{Adrian Regenfuß}
@@ -17,7 +19,7 @@
 
 \begin{abstract}
 In this report, I review the literature on enhanced and extended suffix arrays
-in the context of searching long strings. I examine the different algorithms
+in the context of matching long strings. I examine the different algorithms
 used for both constructing enhanced and extended suffix arrays and for using
 them in searching long strings.
 In the end, I compare enhanced and extended suffix arrays with suffix arrays
@@ -64,6 +66,12 @@ arrays. An enhanced suffix array contains a suffix array together with the
 LCP-array of the string, and sometimes a Burrows-Wheeler transformation
 and an inverse of the suffix table.
 
+The term "Extended Suffix Array" is rarely used in the literature (e.g. in
+\citealt{salson2010dynamic}) and seems to refer to a datastructure
+combining the LCP array with the suffix array of a string. Since algorithms
+that work on extended suffix arrays also work on enhanced suffix arrays,
+I will focus on enhanced suffix arrays in this review.
+
 For the following, let $S$ be a finite string of length $n$ over the
 finite alphabet $\Sigma$.
 
@@ -98,22 +106,20 @@ workarounds based on a secondary array.
 
 Informally, $\hbox{bwttab}$ contains the character before the suffix in
 $\hbox{suftab}$. It is derived from the Burrows-Wheeler transformation
-used in text compression. %TODO: citation needed
+used in text compression.
 By containing $\hbox{bwttab}$, the enhanced suffix array contains a
 complete copy of the original string which can be reconstructed in
 linear time.
 
 Formally, $\hbox{bwttab}$ is defined as follows:
 
-%TODO: fix this LaTeX problem here
-
-% \begin{equation}
-% 	\hbox{bwttab}[i]=
-% 	\begin{cases}
-% 		S[\hbox{suftab}[i]-1] & \text{if \hbox{suftab}[i]>0} \\
-% 		\bot & \text{otherwise}
-% 	\end{cases}
-% \end{equation}
+\begin{equation}
+	\hbox{bwttab}[i]=
+	\begin{cases}
+		S[\hbox{suftab}[i]-1] & \text{if} \hbox{suftab}[i]>0 \\
+		\bot & \text{otherwise}
+	\end{cases}
+\end{equation}
 
 In theory, the size of $\hbox{bwttab}$ depends on the size of the alphabet
 $\Sigma$, but usually it is assumed that $|\Sigma|=256$, one ASCII
@@ -123,9 +129,9 @@ character. The space requirement of $\hbox{bwttab}$ then is $|S|=n$ bytes.
 
 $\hbox{suftab}^{-1}$ is the inverse of the suffix array:
 $\hbox{suftab}^{-1}[\hbox{suftab}[q]]=q$, or, in other words, when
-viewing $\hbox{suftab}$ and $\hbox{suftab}^{-1}$ as permutations, then
-the concatenation $\hbox{suftab}^{-1} \circ \hbox{suftab}=S_{id}$.
-%TODO: order of concatenation, identity permutation
+viewing $\hbox{suftab}$ and $\hbox{suftab}^{-1}$ as permutations,
+then the concatenation $\hbox{suftab}^{-1} \circ \hbox{suftab}=S_{id}$
+($S_{id}$ is the identity permutation, also denoted by $(1)$ or $()$).
 
 $\hbox{suftab}^{-1}$ requires the same amount of space as $\hbox{suftab}$,
 $4n$ bytes.
@@ -143,8 +149,6 @@ transformation and the lcp array.
 For example, let $S=\hbox{"cagccacat"}$. Then $\hbox{suftab}$,
 $\hbox{lcptab}$, $\hbox{bwttab}$, $\hbox{suftab}^{-1}$ and
 $\hbox{suftab}$ are the following:
-
-%TODO: add inverse suffix array
 
 \begin{center}
 	\begin{tabular}{ | l | c | c | c | c | l | }
@@ -304,18 +308,17 @@ $\hbox{bwttab}$.
 \For {$i$ in $0..n-1$}
 	\If {$\hbox{lcptab}[i]>\hbox{lcptab}[i-1] \hbox{ and } i>0$}
 		\State $\hbox{maxstart} \gets i$
-	\ElsIf {$\hbox{lcptab}[i]<\hbox{lcptab}[i-1]$}
+		\State $\hbox{supmaxrep} \gets true$
 		\State $\hbox{preceding} \gets \emptyset$
-		\For{$j$ in $\hbox{maxstart}..i-1$}
-			\If {$\hbox{bwttab}[j] \in \hbox{preceding}$}
-				\State \textbf{break}
-			\EndIf
-			\If {j=i-1}
-				\State $\omega \gets S[\hbox{suftab}[i-1]..\hbox{suftab}[i-1] +\hbox{lcptab}[i-1]]$
-				\State $\hbox{result} \gets \hbox{result} \cup \{(\omega, \hbox{maxstart}, i-1)\}$
-			\EndIf
-			\State $\hbox{preceding} \gets \hbox{preceding} \cup \hbox{bwttab}[j]$
-		\EndFor
+	\ElsIf {$\hbox{lcptab}[i]<\hbox{lcptab}[i-1] \hbox{ and } \hbox{supmaxrep}$}
+		\State $\omega \gets S[\hbox{suftab}[i-1]..\hbox{suftab}[i-1] +\hbox{lcptab}[i-1]]$
+		\State $\hbox{result} \gets \hbox{result} \cup \{(\omega, \hbox{maxstart}, i-1)\}$
+		\State $\hbox{supmaxrep} \gets false$
+	\EndIf
+	\If {$\hbox{bwttab}[i] \in \hbox{preceding}$}
+		\State $\hbox{supmaxrep} \gets false$
+	\Else
+		\State $\hbox{preceding} \gets \hbox{preceding} \cup \hbox{bwttab}[i] $
 	\EndIf
 \EndFor
 \end{algorithmic}
@@ -348,17 +351,135 @@ of concatenated strings.
 
 \subsubsection*{LCP-interval tree Traversal}
 
+Since the LCP-interval tree is simply the suffix tree without leaves, it
+is very useful to being able to construct and traverse the LCP-interval
+tree using the enhanced suffix array.
+
+\citealt{abouelhoda2002enhanced} expand on an algorithm proposed in
+\citealt{kasai2001linear} that traverses the LCP-interval tree bottom
+up and calls a function $process$ for each node in the tree.
+
+The information passed to $process$ consists of a tuple $(\ell, lb, rb,
+children)$, where $lb$ is the left boundary of the $\ell$-interval,
+$rb$ is the right boundary, and $children$ is a list containing the
+child intervals of the given $\ell$-interval (possibly being the empty
+list $[]$).
+
+The algorithm traverses the LCP-interval linearly and has two different
+components:
+
+\begin{itemize}
+\item While the $\ell$-value of the interval on the top of the stack
+is greater than $\hbox{lcptab}[i]$, pop the interval and process it,
+then add it to the children of the new top of the stack
+\item If the $\ell$-value of the interval on the top of the stack is
+smaller than $\hbox{lcptab}[i]$, create a new interval at the top of
+the stack ($lb=i, rb=\bot, children=[]$)
+\end{itemize}
+
+This algorithm runs in $\mathcal{O}(n)$ time.
+
 \subsubsection*{Enhanced Suffix Array Algorithm for Finding Maximal Repeats}
+
+One possible application of LCP-interval tree traversal is the detection
+of maximal repeats in a string.
+
+%TODO: write out
 
 \section*{Construction}
 
+\subsection*{Of the Suffix Array}
+
+The naive construction of the suffix array (sorting the suffixes
+lexically while saving their positions) uses $\mathcal{O}(n^2 \log n)$
+time ($n^2 \log n$ instead of $n \log n$ because each suffix comparison
+can at worst use $\mathcal{O}(n)$ time). If done in place (e.g. using
+pointers), it uses $\mathcal{O}(n)$ space. \citealt{manber1993suffix} use
+radix sort.
+
+Several $\mathcal{O}(n)$ algorithms have been developed for sorting
+suffixes: the skew algorithm described by \cite{karkkainen2003simple}
+or the pure-induced sorting from \citealt{nong2009linear}. %TODO: more?
+
+\subsection*{Of the Inverse Suffix Array}
+
+Neither \citealt{abouelhoda2004replacing} nor
+\citealt{abouelhoda2002enhanced} describe an algorithm for constructing
+inverse suffix arrays. Since the algorithm is quite straightforward,
+it can be listed here:
+
+\begin{algorithmic}
+\For {$i$ in $0..n-1$}
+	\State $\hbox{suftab}^{-1}[\hbox{suftab}[i]] \gets i$
+\EndFor
+\end{algorithmic}
+
+This is a straightforward implementation of the definition of the inverse
+suffix array, and the algorithm has time complexity $\mathcal{O}(n)$.
+
+\subsection*{Of the LCP Array}
+
+The LCP array can be constructed in linear time from the
+suffix tree by first constructing the suffix tree in linear time
+(\cite{giegerich1997ukkonen}), then removing the leaves to create the
+LCP interval tree, and then traversing the LCP interval tree to generate
+the LCP array. All steps run in $\mathcal{O}(n)$, so in combination they
+also run in $\mathcal{O}(n)$.
+
+Alternatively, one can use the induced sorting algorithm
+(\cite{fischer2011inducing}) to compute both suffix arrays and LCP-arrays.
+
+\subsection*{Of the Burrows-Wheeler Transform Array}
+
+The BWT array can be constructed in linear time from the suffix array
+using the naive algorithm (just linearly traversing the suffix array
+and executing $\hbox{bwttab}[i]=S[\hbox{suftab}[i]-1]$).
+
 \section*{Comparison}
+
+The enhanced suffix array was developed as an alternative to the Suffix
+Tree, which has been a successful and fast data structure in genome
+analysis, but uses a lot of memory. Specifically, the suffix tree uses
+about 20 bytes per input character (\cite{kurtz1999reducing}). The
+goal was to create a datastructure with which one can solve the same
+problems as the suffix tree, with the same time complexity, but which
+uses less space.
+
+The enhanced suffix array uses 10 bytes per input character under plausible
+assumptions:
+
+\begin{itemize}
+\item $\hbox{suftab}$ uses $4n$ bytes (assuming $|S| \le 2^32$)
+\item $\hbox{suftab}^{-1}$ uses $4n$ bytes as well
+\item $\hbox{lcptab}$ uses $n$ bytes (usually assuming LCP values $<255$, although \citealt{abouelhoda2004replacing} describes how to use a secondary array to manage extreme cases)
+\item $\hbox{bwttab}$ uses $n$ bytes (assuming $|\Sigma| \le 255$)
+\end{itemize}
+
+On disk, an enhanced suffix array then uses $10n$ bytes instead of
+$20n$ bytes for a suffix tree, but most algorithms for Enhanced Suffix
+Arrays don't use every component, but are usually restricted (e.g. exact
+string matching only needing $\hbox{suftab}$ and $\hbox{lcptab}$, and
+$\hbox{suftab}^{-1}$ only being required for finding tandem repeats).
+This means that practical working memory requirements during runtime
+are usually even smaller.
+
+Enhanced suffix arrays also carry the benefit of a linear layout
+in memory, which increases cache performance as compared to less
+linear suffix trees, and often offer practical speedups to existing
+implementations (see \citealt[sec. 7]{abouelhoda2002enhanced}).
 
 \section*{Applications}
 
-%REPuter
-%vmatch
-%MUMmer
+Enhanced suffix arrays have been used in bioinformatics
+software such as \href{http://vmatch.de/}{VMatch}
+(see \citealt{kurtz2003vmatch}), subsuming the
+\href{https://bibiserv.cebitec.uni-bielefeld.de/reputer/}{REPuter project}
+(see \citealt{kurtz2001reputer}).
+
+However, many genome comparison software projects use
+suffix trees instead of enhanced or extended suffix array,
+such as \href{http://mummer.sourceforge.net/}{MUMmer}
+(\citealt{kurtz2004versatile}).
 
 \section*{Conclusion}
 
