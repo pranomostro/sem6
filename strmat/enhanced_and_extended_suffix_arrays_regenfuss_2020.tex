@@ -183,8 +183,7 @@ One can visualize the lengths of the longest common prefixes as a
 landscape, and LCP-intervals being regions in that landscape that have
 a minimum height $\ell$.
 
-%\includegraphics[width=\textwidth]{local_maxima.png}
-%TODO: fix with figures
+\includegraphics[width=\textwidth]{local_maxima.png}
 
 LCP-intervals can be embedded into each other, specifically, an
 $\mathcal{k}-[i..j]$ is embedded in $\mathcal{l}-[k..l]$ iff $k \le i
@@ -384,7 +383,37 @@ This algorithm runs in $\mathcal{O}(n)$ time.
 One possible application of LCP-interval tree traversal is the detection
 of maximal repeats in a string.
 
-%TODO: write out
+\citealt{abouelhoda2002enhanced} describe an algorithm that finds maximal
+repeats in $\mathcal{O}(kn+z)$ time, where $k=|\Sigma|$ and z is the
+amount of maximal repeats. For this, it uses lcp-interval tree traversal
+to build position sets for an interval and its child interval and to
+output position sets for distinct characters. It uses $\hbox{lcptab}$,
+$\hbox{bwttab}$ and $\hbox{suftab}$.
+
+A position set $\mathcal{P}_{[i..j]}(a)$ is the set of all positions in
+an $\ell$-interval $[i..j]$ that are preceded by the character $a \in
+\Sigma \cup \{\bot\}$:
+
+$$\mathcal{P}(a)= \{ p \in \ell-[i..j] | \hbox{bwttab}[p]=a\}$$
+
+This means that for a 1-interval $[i..i+1]$, $\mathcal{P}(a)$ is
+$\emptyset$ for all a except $\hbox{bwttab}[i]$.
+
+The current position set is saved on a per-function persistent stack. Let
+$\mathcal{P}_{[i'..j']}(a)$ be the position set at the top of the stack
+for $a \in \Sigma \cup \bot$ (position sets for all $a \in \Sigma \cup
+\bot$ are saved on the stack).
+
+Given the child position sets $\mathcal{P}_{[i'..j']}(a)$ and the current
+position sets $\mathcal{P}^{q}_{[i..j]}(a)$ ($i<i'<j'<j$) for all $a
+\in \Sigma \cup \bot$ ($[i..j]$ being an $\ell$-interval, $[i'..j']$
+being an $\ell+1$-interval), output $(p, p+\ell-1), (p',p'+\ell-1))$ for
+$p \in \mathcal{P}^{q}_{[i..j]}(a)$ and $p' \in \mathcal{P}^{q}_{[i..j]}(b)$
+for $a, b \in \Sigma \cup \bot$, $a \not = b$.
+
+The position sets are then combined and saved on the stack:
+$\mathcal{P}^{q+1}_{[i..j]}(e):=\mathcal{P}^{q}_{[i..j]}(e) \cup
+\mathcal{P}_{[i'..j']}(e)$ for all $e$ in the alphabet.
 
 \section*{Construction}
 
@@ -399,7 +428,7 @@ radix sort.
 
 Several $\mathcal{O}(n)$ algorithms have been developed for sorting
 suffixes: the skew algorithm described by \cite{karkkainen2003simple}
-or the pure-induced sorting from \citealt{nong2009linear}. %TODO: more?
+or the pure-induced sorting from \citealt{nong2009linear}.
 
 \subsection*{Of the Inverse Suffix Array}
 
@@ -449,7 +478,7 @@ The enhanced suffix array uses 10 bytes per input character under plausible
 assumptions:
 
 \begin{itemize}
-\item $\hbox{suftab}$ uses $4n$ bytes (assuming $|S| \le 2^32$)
+\item $\hbox{suftab}$ uses $4n$ bytes (assuming $|S| \le 2^{32}$)
 \item $\hbox{suftab}^{-1}$ uses $4n$ bytes as well
 \item $\hbox{lcptab}$ uses $n$ bytes (usually assuming LCP values $<255$, although \citealt{abouelhoda2004replacing} describes how to use a secondary array to manage extreme cases)
 \item $\hbox{bwttab}$ uses $n$ bytes (assuming $|\Sigma| \le 255$)
@@ -482,6 +511,23 @@ such as \href{http://mummer.sourceforge.net/}{MUMmer}
 (\citealt{kurtz2004versatile}).
 
 \section*{Conclusion}
+
+I have presented the enhanced suffix array and the algorithms it uses
+to solve several string matching problems, among them finding maximal
+and supermaximal repeats and exact string matching.
+The enhanced suffix array presents a viable alternative to other string
+matching datastructures such as the suffix tree: the construction
+algorithms have a comparable time complexity ($\mathcal{O}(n)$), as well
+as the the specific string matching problems ($\mathcal{O}(m + \log n)$
+for exact string matching, $\mathcal{O}$ for finding supermaximal repeats
+and MUMs, and $\mathcal{O}(|\Sigma|n+z)$ for finding maximal repeats).
+Beyond that, in practice enhanced suffix arrays use less working memory
+than suffix trees and often have faster execution times due to linear
+layout in memory.
+
+I have not covered algorithms for finding tandem repeats, methods for
+updating enhanced suffix arrays when the underlying string $S$ changes,
+and compressed enhanced suffix arrays.
 
 \bibliographystyle{plainnat}
 \bibliography{sources}
